@@ -10,44 +10,48 @@
 </head>
 <body>
 
-<input type="text" readonly id="in" style="height: 40px;width: 200px; font-size: 30px;text-align: right"
-       value="0"/>
+<div id="calc">
 
-<div id="numbers">
-    <div>
-        <input type="button" class="btns" value="1"/>
-        <input type="button" class="btns" value="2"/>
-        <input type="button" class="btns" value="3"/>
-    </div>
-    <div>
-        <input type="button" class="btns" value="4"/>
-        <input type="button" class="btns" value="5"/>
-        <input type="button" class="btns" value="6"/>
-    </div>
-    <div>
-        <input type="button" class="btns" value="7"/>
-        <input type="button" class="btns" value="8"/>
-        <input type="button" class="btns" value="9"/>
-    </div>
-    <div>
-        <input type="button" class="btns" value="0"/>
-        <input type="button" class="btns" value="."/>
-        <input type="button" class="btns" value="<-"/>
-    </div>
-</div>
+    <input type="text" readonly id="in" style="height: 40px;width: 200px; font-size: 30px;text-align: right"
+           value="0"/>
 
-<div id="ops">
-    <div>
-        <input type="button" class="btns" value="/"/>
-        <input type="button" class="btns" value="*"/>
-        <input type="button" class="btns" value="-"/>
+    <div id="numbers">
+        <div>
+            <input type="button" class="btns" value="1"/>
+            <input type="button" class="btns" value="2"/>
+            <input type="button" class="btns" value="3"/>
+        </div>
+        <div>
+            <input type="button" class="btns" value="4"/>
+            <input type="button" class="btns" value="5"/>
+            <input type="button" class="btns" value="6"/>
+        </div>
+        <div>
+            <input type="button" class="btns" value="7"/>
+            <input type="button" class="btns" value="8"/>
+            <input type="button" class="btns" value="9"/>
+        </div>
+        <div>
+            <input type="button" class="btns" value="0"/>
+            <input type="button" class="btns" value="."/>
+            <input type="button" class="btns" value="<-"/>
+        </div>
     </div>
-    <div>
-        <input type="button" class="btns" value="+"/>
-        <input type="button" class="btns" value="%"/>
-        <input type="button" class="btns" value="="/>
-        <input type="button" class="btns" value="c"/>
+
+    <div id="ops">
+        <div>
+            <input type="button" class="btns" value="/"/>
+            <input type="button" class="btns" value="*"/>
+            <input type="button" class="btns" value="-"/>
+        </div>
+        <div>
+            <input type="button" class="btns" value="+"/>
+            <input type="button" class="btns" value="%"/>
+            <input type="button" class="btns" value="="/>
+            <input type="button" class="btns" value="c"/>
+        </div>
     </div>
+
 </div>
 
 </body>
@@ -207,6 +211,7 @@
         }
     }
 
+
     $(document).ready(function () {
         // CSS style
         $(".btns").css("width", "40px");
@@ -230,21 +235,27 @@
 
 
         // click event handler
-        $(".btns").click(function () {
-            var val = $(this).prop("value");
+        $("#calc").click(function (event) {
+            if ($(event.target).is(".btns")) {
+                var val = $(event.target).prop("value");
 
-            if ($.isNumeric(val)) {
-                appendOperand(val);
-            } else if (val == ".") {
-                if (!alreadyHasDot())
-                    appendOperand(val);
-            } else {
-                doOperation(val);
+                function processInput(val) {
+                    if ($.isNumeric(val)) {
+                        appendOperand(val);
+                    } else if (val == ".") {
+                        if (!alreadyHasDot())
+                            appendOperand(val);
+                    } else {
+                        doOperation(val);
+                    }
+
+                    displayOperand();
+                }
+
+                processInput(val);
             }
-
-            displayOperand()
-
         });
+
     });
 
 
