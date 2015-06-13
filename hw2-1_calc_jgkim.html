@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head lang="ko">
+    <meta charset="UTF-8">
+    <title>계산기</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+
+<input type="text" readonly id="in" style="height: 40px;width: 200px; font-size: 30px;text-align: right"
+       value="0"/>
+
+<div id="numbers">
+    <div>
+        <input type="button" class="btns" value="1"/>
+        <input type="button" class="btns" value="2"/>
+        <input type="button" class="btns" value="3"/>
+    </div>
+    <div>
+        <input type="button" class="btns" value="4"/>
+        <input type="button" class="btns" value="5"/>
+        <input type="button" class="btns" value="6"/>
+    </div>
+    <div>
+        <input type="button" class="btns" value="7"/>
+        <input type="button" class="btns" value="8"/>
+        <input type="button" class="btns" value="9"/>
+    </div>
+    <div>
+        <input type="button" class="btns" value="0"/>
+        <input type="button" class="btns" value="."/>
+        <input type="button" class="btns" value="<-"/>
+    </div>
+</div>
+
+<div id="ops">
+    <div>
+        <input type="button" class="btns" value="/"/>
+        <input type="button" class="btns" value="*"/>
+        <input type="button" class="btns" value="-"/>
+    </div>
+    <div>
+        <input type="button" class="btns" value="+"/>
+        <input type="button" class="btns" value="%"/>
+        <input type="button" class="btns" value="="/>
+        <input type="button" class="btns" value="c"/>
+    </div>
+</div>
+
+</body>
+
+<script language="JavaScript">
+
+    var operand1 = "0";
+    var operand2 = "0";
+    var operator = "";
+
+    OperandMode = {
+        OPERAND1: 0,
+        OPERAND2: 1
+    };
+    var currentInputMode = OperandMode.OPERAND1; // 1 : operand1, 2 : operand2
+
+
+    function appendOperand(val) {
+        if (operator == "") {
+            if (operand1 == "0")
+                operand1 = val;
+            else
+                operand1 += val;
+        } else {
+            if (operand2 == "0") {
+                operand2 = val;
+                currentInputMode = OperandMode.OPERAND2;
+            } else
+                operand2 += val;
+        }
+    }
+
+    function needCalculation() {
+        return operand1 != ""
+                && operand2 != ""
+                && operator != "";
+    }
+
+    function resetCalculation() {
+        operand1 = "0";
+        operand2 = "0";
+        operator = "";
+        currentInputMode = OperandMode.OPERAND1;
+    }
+    function doAddOperation() {
+        if (needCalculation()) {
+            var result = parseFloat(operand1) + parseFloat(operand2);
+            resetCalculation();
+            operand1 = result.toString();
+        }
+    }
+    function doMinusOperation() {
+        if (needCalculation()) {
+            var result = parseFloat(operand1) - parseFloat(operand2);
+            resetCalculation();
+            operand1 = result.toString();
+        }
+    }
+    function doMultiplyOperation() {
+        if (needCalculation()) {
+            var result = parseFloat(operand1) * parseFloat(operand2);
+            resetCalculation();
+            operand1 = result.toString();
+        }
+    }
+    function doDivisionOperation() {
+        if (needCalculation()) {
+            if (parseFloat(operand2) == 0) {
+                alert("Devision by Zero");
+                return;
+            }
+            var result = parseFloat(operand1) / parseFloat(operand2);
+            resetCalculation();
+            operand1 = result.toString();
+        }
+    }
+    function doModOperation() {
+        if (needCalculation()) {
+            var result = parseFloat(operand1) % parseFloat(operand2);
+            resetCalculation();
+            operand1 = result.toString();
+        }
+    }
+
+    function calculate() {
+        if (!needCalculation()) {
+            return;
+        }
+        switch (operator) {
+            case "+":
+                doAddOperation();
+                break;
+            case "-":
+                doMinusOperation();
+                break;
+            case "*":
+                doMultiplyOperation();
+                break;
+            case "/":
+                doDivisionOperation();
+                break;
+            case "%":
+                doModOperation();
+                break;
+        }
+    }
+
+    function removeLastNumber() {
+        if (operator != "") {
+            operand2 = operand2.slice(0, -1);
+            if (operand2 == "")
+                operand2 = "0";
+        } else {
+            operand1 = operand1.slice(0, -1);
+            if (operand1 == "")
+                operand1 = "0";
+        }
+    }
+    function doOperation(val) {
+
+        switch (val.toLowerCase()) {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "%":
+                if (needCalculation()) {
+                    calculate();
+                }
+                operator = val;
+                break;
+            case "<-":
+                removeLastNumber();
+                break;
+            case "=":
+                calculate();
+                break;
+            case "c":
+                resetCalculation();
+                break;
+        }
+    }
+
+    function displayOperand() {
+        if (currentInputMode == OperandMode.OPERAND1) {
+            $("#in").val(operand1);
+        } else {
+            $("#in").val(operand2);
+        }
+    }
+
+    function alreadyHasDot() {
+        if (operator == "") {
+            return operand1.indexOf('.') != -1
+        } else {
+            return operand2.indexOf('.') != -1
+        }
+    }
+
+    $(document).ready(function () {
+        // CSS style
+        $(".btns").css("width", "40px");
+        $(".btns").css("height", "40px");
+        $("#numbers div input").css("background", "lightgreen");
+        $("#numbers div input").hover(function () {
+            $(this).css('color', 'red');
+            $(this).css("background", "darkgreen");
+        }, function () {
+            $(this).css('color', '');
+            $(this).css("background", "lightgreen");
+        });
+        $("#ops div input").css("background", "lightblue");
+        $("#ops div input").hover(function () {
+            $(this).css('color', 'red');
+            $(this).css("background", "darkblue");
+        }, function () {
+            $(this).css('color', '');
+            $(this).css("background", "lightblue");
+        });
+
+
+        // click event handler
+        $(".btns").click(function () {
+            var val = $(this).prop("value");
+
+            if ($.isNumeric(val)) {
+                appendOperand(val);
+            } else if (val == ".") {
+                if (!alreadyHasDot())
+                    appendOperand(val);
+            } else {
+                doOperation(val);
+            }
+
+            displayOperand()
+
+        });
+    });
+
+
+</script>
+</html>

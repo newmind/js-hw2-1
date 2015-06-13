@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <style>
+    </style>
+
+</head>
+<body>
+
+<div style="float: left; width: 100px;">
+    <div>아이디</div>
+    <div>비밀번호</div>
+</div>
+<div style="float: left; width: 200px;">
+    <div><input type="text" id="id"/></div>
+    <div><input type="password" id="password"/></div>
+</div>
+<div style="float: left; width: 200px;">
+    <input type="button" id="loginBtn" value="로그인" style="width: 100px;height: 100px;"/>
+</div>
+
+</body>
+<script language="JavaScript">
+
+    jQuery.fn.print = function (message) {
+        return this.each(function () {
+            $('<div class="result" />')
+                    .text(String(message))
+                    .append($(this).find('.results'));
+        });
+    };
+    $("#example").print("hello");
+
+    /*
+     - 아이디/암호는 n3n/n3n1234와 맞으면 로그인 되었다는 메시지 박스가 뜨면 됨
+     (틀리면 틀리다는 메시지 박스를 띄운 후 '암호'입력란을 비움) - 미입력에 대한 처리를 해야 한다.
+     - 아이디는 특수문자가 입력되지 않도록 한다.
+     - 아이디와 패스워드는 20자 이상 입력되지 않도록 한다.
+     */
+
+    function isReachLimit(obj$) {
+        var value = obj$.prop("value");
+        return (value.length >= 20)
+    }
+    function isSpecialChar(keyCode) {
+        var regexAlphaNumChars = new RegExp("^[a-zA-Z0-9]+$");
+        return !regexAlphaNumChars.test(keyCode);
+    }
+
+    $(document).ready(function () {
+
+        $("#id").keypress(function (event) {
+            var keyCode = String.fromCharCode(event.charCode ? event.which : event.charCode);
+            if (isSpecialChar(keyCode)
+                    || isReachLimit($(this))) {
+                event.preventDefault();
+            }
+        });
+        $("#password").keypress(function (event) {
+            if (isReachLimit($(this))) {
+                event.preventDefault();
+            }
+        });
+
+        $("#loginBtn").click(function () {
+            var id = $("#id").prop("value");
+            var password = $("#password").prop("value");
+
+            if (id == "" || password == "") {
+                alert("아이디와 암호를 입력하세요.");
+                return;
+            }
+
+            if (id == "n3n" || password == "n3n1234") {
+                alert("로긴 성공.");
+            } else {
+                alert("로긴 실패. 다시 입력하세요.");
+            }
+
+        });
+    });
+
+</script>
+</html>
